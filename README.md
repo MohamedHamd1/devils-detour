@@ -22,6 +22,8 @@ Tested target: Anbernic RG34XX SP (720x480) and RG35XX Pro (640x480) on muOS. An
 | Start | Pause (Select while paused: back to menu) |
 | Start + Select (hold 1 s) | Quit |
 
+Screens between 4:3 and about 16:10 (640x480, 720x480) are stretched to fill the screen; other shapes (e.g. 720x720) keep the 4:3 picture with black bars (`TRUST_KEEP_ASPECT=1` forces bars everywhere).
+
 After 8 deaths on a level, Select skips it. Progress is saved in `save.txt` next to the binary.
 
 ## Install (muOS / PortMaster)

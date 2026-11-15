@@ -1490,11 +1490,22 @@ static int solve_range(int a, int b) {
 #endif
 
 /* ============================================================== main */
-/* the game draws on a 640x480 canvas; scale x and y separately so it fills any screen (720x480 on the RG34XX SP) */
+/* the game draws on a 640x480 canvas. Screens close to 4:3 .. 16:10 (640x480, 720x480, 800x480) are stretched to fill
+   them (so the RG34XX SP has no black bars). Anything else (720x720, ultrawide, rotated) keeps the 4:3 shape with
+   black bars so the picture is never squashed. TRUST_KEEP_ASPECT=1 forces the bars everywhere. */
 static void fit_screen(void) {
+  static int mode = -1;
   int ow = 0, oh = 0;
   SDL_GetRendererOutputSize(RD, &ow, &oh);
-  if (ow > 0 && oh > 0) SDL_RenderSetScale(RD, (float)ow / 640.0f, (float)oh / 480.0f);
+  if (ow <= 0 || oh <= 0) return;
+  double r = (double)ow / (double)oh;
+  int keep = getenv("TRUST_KEEP_ASPECT") != NULL || r < 1.25 || r > 1.70;
+  if (keep) {
+    if (mode != 1) { SDL_RenderSetScale(RD, 1.0f, 1.0f); SDL_RenderSetLogicalSize(RD, 640, 480); mode = 1; }
+  } else {
+    if (mode != 0) { SDL_RenderSetLogicalSize(RD, 0, 0); mode = 0; }
+    SDL_RenderSetScale(RD, (float)ow / 640.0f, (float)oh / 480.0f);
+  }
 }
 
 #ifdef TRUST_TEST
@@ -1604,8 +1615,10 @@ static void art_scene(int kind, const char *out) {
 
 #ifdef TRUST_TEST
 #define WIN_W (getenv("TRUST_W") ? atoi(getenv("TRUST_W")) : 640)
+#define WIN_H (getenv("TRUST_H") ? atoi(getenv("TRUST_H")) : 480)
 #else
 #define WIN_W 640
+#define WIN_H 480
 #endif
 int main(int argc, char **argv) {
   world = (World *)malloc(sizeof(World));
@@ -1643,7 +1656,7 @@ int main(int argc, char **argv) {
   Uint32 wf = 0;
   const char *fsEnv = getenv("TRUST_FULLSCREEN");
   if (fsEnv && fsEnv[0] == '1') wf |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-  SDL_Window *win = SDL_CreateWindow("Devil's Detour", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, 480, wf);
+  SDL_Window *win = SDL_CreateWindow("Devil's Detour", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, wf);
   if (!win) { fprintf(stderr, "window failed: %s\n", SDL_GetError()); return 1; }
 #ifdef TRUST_TEST
   if (argc > 5 && !strcmp(argv[1], "--shot")) RD = SDL_CreateRenderer(win, -1, SDL_RENDERER_SOFTWARE);
@@ -1652,8 +1665,7 @@ int main(int argc, char **argv) {
   RD = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!RD) RD = SDL_CreateRenderer(win, -1, SDL_RENDERER_SOFTWARE);
   if (!RD) { fprintf(stderr, "renderer failed: %s\n", SDL_GetError()); return 1; }
-  if (getenv("TRUST_KEEP_ASPECT")) SDL_RenderSetLogicalSize(RD, 640, 480);   /* default: stretch to the whole screen */
-  else fit_screen();
+  fit_screen();
   SDL_SetRenderDrawBlendMode(RD, SDL_BLENDMODE_BLEND);
   SDL_ShowCursor(SDL_DISABLE);
   fonts_init();
@@ -1725,7 +1737,7 @@ int main(int argc, char **argv) {
     compute_pressed();
     game_update(dt);
 
-    if (!getenv("TRUST_KEEP_ASPECT")) fit_screen();
+    fit_screen();
     draw_all();
     SDL_RenderPresent(RD);
     Uint64 after = SDL_GetPerformanceCounter();
