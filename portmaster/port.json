@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "devilsdetour.zip",
+  "items": [
+    "Devils Detour.sh",
+    "devilsdetour"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Devil's Detour",
+    "porter": [
+      "Mohamed"
+    ],
+    "desc": "A pixel-art trick platformer where every level lies to you. Signs point the wrong way, flags can kill, gates throw you across walls or get you killed, and the level changes with the clock. 550 levels in 11 worlds.",
+    "desc_md": null,
+    "inst": "Ready to run!",
+    "inst_md": null,
+    "genres": [
+      "platformer",
+      "puzzle"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": "2.17"
+  }
+}

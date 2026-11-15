@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Devils Detour.sh</path>
+    <name>Devil's Detour</name>
+    <desc>A pixel-art trick platformer where every level lies to you. Signs point the wrong way, flags can kill, gates throw you across walls or get you killed, and the level changes with the clock. 550 levels in 11 worlds.</desc>
+    <releasedate>20261115T000000</releasedate>
+    <developer>Mohamed</developer>
+    <publisher>Mohamed</publisher>
+    <genre>Platformer</genre>
+    <image>./devilsdetour/cover.png</image>
+  </game>
+</gameList>
