@@ -28,7 +28,6 @@ cd $GAMEDIR
 $ESUDO chmod +x "$GAMEDIR/$BINARY"
 
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
-export TRUST_FULLSCREEN=1
 
 $GPTOKEYB "$BINARY" -c "./$BINARY.gptk" &
 

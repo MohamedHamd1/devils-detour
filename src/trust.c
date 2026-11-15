@@ -1653,9 +1653,11 @@ int main(int argc, char **argv) {
     return 1;
   }
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-  Uint32 wf = 0;
-  const char *fsEnv = getenv("TRUST_FULLSCREEN");
-  if (fsEnv && fsEnv[0] == '1') wf |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#ifdef TRUST_TEST
+  Uint32 wf = 0;   /* test build: windowed, TRUST_W / TRUST_H set the size */
+#else
+  Uint32 wf = SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
   SDL_Window *win = SDL_CreateWindow("Devil's Detour", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, wf);
   if (!win) { fprintf(stderr, "window failed: %s\n", SDL_GetError()); return 1; }
 #ifdef TRUST_TEST
